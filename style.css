@@ -1,0 +1,269 @@
+/* ==========================================================================
+   Segmentor VJ tool — layout and menu. The type itself is drawn on the
+   canvas by app.js; this file only styles the menu and the controls.
+   Light is the default; [data-theme="dark"] on <html> swaps the colours.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Segmentor";
+  src: url("fonts/Segmentor.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --bg: #fff;
+  --ink: #000;
+  --soft: rgba(0, 0, 0, 0.45);
+  --line: rgba(0, 0, 0, 0.18);
+  --hover: #ff3ea5;
+  --menu-w: 280px;
+  --font: "Segmentor", ui-monospace, monospace;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #000;
+  --ink: #fff;
+  --soft: rgba(255, 255, 255, 0.5);
+  --line: rgba(255, 255, 255, 0.22);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.35 var(--font);
+  overflow: hidden;
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+  /* No text selection or iOS callouts while drumming on the screen */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+[hidden] { display: none !important; }
+
+/* --- Menu (left) --------------------------------------------------------- */
+.menu {
+  flex: 0 0 var(--menu-w);
+  width: var(--menu-w);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 16px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+  z-index: 2;
+}
+.menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  margin-bottom: 22px;
+}
+.menu-toggle, .perform-exit {
+  font-size: 28px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  transform: scaleX(-1);       /* ‹ when the menu is open, › when closed */
+  margin-left: auto;
+}
+.menu-back { font-size: 15px; letter-spacing: 0.04em; }
+.menu-back::after { content: " ›"; }
+.menu-back:hover, .menu-toggle:hover, .perform-exit:hover { color: var(--hover); }
+
+.menu-main { display: flex; flex-direction: column; gap: 6px; }
+.menu-item {
+  text-align: left;
+  font-size: 21px;
+  letter-spacing: 0.02em;
+  padding: 2px 0;
+}
+.menu-item:hover, .menu-item:focus-visible { color: var(--hover); outline: none; }
+.menu-item.is-on { color: var(--hover); }
+
+.panel h2 {
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: 0.06em;
+  margin: 18px 0 8px;
+}
+.panel h2:first-child { margin-top: 0; }
+.hint { color: var(--soft); font-size: 12px; margin: 0 0 10px; }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.row input[type="range"] { flex: 1; min-width: 0; }
+.row select { flex: 1; min-width: 0; }
+.row output { width: 3.2em; text-align: right; color: var(--soft); }
+input[type="range"] { accent-color: var(--ink); }
+input[type="checkbox"] { accent-color: var(--ink); margin: 0; }
+select {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 3px 4px;
+  font-size: 12px;
+}
+input[type="color"] {
+  width: 36px; height: 22px; padding: 0;
+  border: 1px solid var(--line); background: none;
+}
+
+.btn {
+  display: inline-block;
+  border: 1px solid var(--ink);
+  padding: 5px 10px;
+  margin: 2px 0 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn:hover { background: var(--ink); color: var(--bg); }
+.btn.is-on { background: var(--ink); color: var(--bg); }
+.btn.file input { display: none; }
+
+/* Segmented choice (Plain / Colour / Pattern / File …) */
+.choice { display: flex; border: 1px solid var(--ink); margin: 4px 0 12px; }
+.choice.wrap { flex-wrap: wrap; }
+.choice button {
+  flex: 1 1 auto;
+  padding: 5px 6px;
+  font-size: 12px;
+  border-right: 1px solid var(--ink);
+}
+.choice button:last-child { border-right: 0; }
+.choice.wrap button { flex: 1 1 33%; border-bottom: 1px solid var(--ink); }
+.choice button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 4px 0 10px; }
+.swatches button {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  position: relative;
+}
+.swatches button span {
+  position: absolute; inset: 30%;
+}
+
+/* --- Drumpad -------------------------------------------------------------- */
+.pad-list, .sound-list { list-style: none; margin: 0; padding: 0; }
+.pad-list li, .sound-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+  font-size: 13px;
+}
+.pad-list .name, .sound-list .name { width: 3.4em; }
+.key-chip {
+  min-width: 2.2em;
+  padding: 1px 6px;
+  border: 1px solid var(--ink);
+  text-align: center;
+  text-transform: uppercase;
+}
+.key-chip.is-learning { background: var(--hover); border-color: var(--hover); color: #000; }
+.pad-list .note { color: var(--soft); font-size: 11px; }
+.sound-list select { flex: 1; min-width: 0; }
+.sound-list label.load { font-size: 11px; color: var(--soft); cursor: pointer; white-space: nowrap; }
+.sound-list label.load:hover { color: var(--ink); }
+.sound-list label.load input { display: none; }
+.sound-list .sample-on { color: var(--hover); }
+
+.pad-box { border: 1px solid var(--ink); padding: 10px; margin: 14px 0 4px; }
+.pads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pads button {
+  aspect-ratio: 1;
+  border: 1px solid var(--ink);
+  font-size: 15px;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition: background-color 0.25s ease-out;
+}
+.pads button.is-hit { transition: none; }
+.styles { display: flex; justify-content: space-between; margin-top: 10px; }
+.styles button { font-size: 15px; padding: 2px 4px; }
+.styles button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 3px; }
+.styles button:hover { color: var(--hover); }
+
+.effect { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 8px; margin: 6px 0 10px; font-size: 13px; }
+.effect input[type="range"] { grid-column: 2; }
+
+.meters { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; height: 54px; align-items: end; margin: 6px 0 10px; }
+.meters span { display: block; background: var(--ink); height: 2%; min-height: 1px; }
+
+.menu-foot {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+.menu-foot a { color: var(--soft); text-decoration: none; }
+.menu-foot a:hover { color: var(--hover); }
+
+/* --- Stage (the type) ------------------------------------------------------- */
+.stage { position: relative; flex: 1 1 auto; height: 100%; min-width: 0; overflow: hidden; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: text; }
+/* The textarea is invisible; it only collects the keys while typing. 16px
+   stops iOS from zooming in when it gets focus. */
+.type-input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px;
+  opacity: 0; border: 0; padding: 0; resize: none; font-size: 16px;
+  pointer-events: none;
+}
+.stage-hint {
+  position: absolute; left: 20px; bottom: 16px; margin: 0;
+  font-size: 12px; color: var(--soft); pointer-events: none;
+  max-width: calc(100% - 140px);
+}
+.corner { position: absolute; right: 18px; bottom: 16px; display: flex; gap: 10px; }
+.sq { width: 22px; height: 22px; border: 1.5px solid var(--ink); }
+.sq-theme { background: var(--ink); }
+.sq-fill { background: transparent; }
+body.is-fill .sq-fill { background: var(--ink); box-shadow: inset 0 0 0 4px var(--bg); }
+.sq:hover { border-color: var(--hover); }
+.rec-dot {
+  position: absolute; top: 14px; right: 18px; margin: 0;
+  color: #ff2a1a; font-size: 13px; letter-spacing: 0.04em;
+}
+.perform-exit {
+  position: absolute; top: 18px; left: 16px; display: none;
+  transform: none; margin: 0; color: var(--soft);
+}
+
+/* Menu hidden (the arrow) or perform mode: only the type, and the arrow */
+body.menu-hidden .menu, body.perform .menu { display: none; }
+body.menu-hidden .perform-exit, body.perform .perform-exit { display: block; }
+body.perform .stage-hint, body.perform .corner { display: none; }
+body.perform .perform-exit { opacity: 0; transition: opacity 0.3s; }
+body.perform .perform-exit:hover, body.perform .perform-exit:focus-visible { opacity: 1; }
+body.perform .stage canvas { cursor: none; }
+
+/* Phones: the menu slides over the type */
+@media (max-width: 700px) {
+  .menu {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: min(88vw, 340px);
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.25);
+  }
+  .stage-hint { display: none; }
+}
+
+/* Effects panel: group titles and the BPM row */
+.fx-group { font-size: 11px; font-weight: normal; letter-spacing: 0.08em; color: var(--soft); margin: 16px 0 4px; }
+.fx-group:first-child { margin-top: 4px; }
+.bpm-row { margin: -4px 0 10px 22px; }
+.bpm-row .btn { margin: 0; padding: 2px 8px; font-size: 12px; }

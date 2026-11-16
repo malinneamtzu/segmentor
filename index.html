@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Segmentor — play the type</title>
+  <meta name="description" content="Segmentor: a variable typeface you play like a drum kit. Nine pads, nine axes, five styles. By Mălin Neamțu.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/Segmentor.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=1794826523">
+</head>
+<body>
+<aside class="menu" id="menu">
+  <div class="menu-head">
+    <button class="menu-back" type="button" data-back hidden>MENU</button>
+    <button class="menu-toggle" type="button" data-toggle-menu aria-label="Hide menu">›</button>
+  </div>
+
+    <nav class="menu-main" data-panel="main">
+    <button type="button" class="menu-item" data-action="perform">PERFORM MODE</button>
+    <button type="button" class="menu-item" data-action="record"><span data-rec-label>RECORD</span></button>
+    <button type="button" class="menu-item" data-open="effects">EFFECTS</button>
+    <button type="button" class="menu-item" data-open="camera">CAMERA</button>
+    <button type="button" class="menu-item" data-open="background">BACKGROUND</button>
+    <button type="button" class="menu-item" data-open="drumpad">DRUMPAD</button>
+    <button type="button" class="menu-item" data-open="input">INPUT</button>
+  </nav>
+
+    <section class="panel" data-panel="drumpad" hidden>
+    <h2>KEYPADS</h2>
+    <p class="hint">Click a pad's key to change it, then press a key (or hit a MIDI pad).</p>
+    <ol class="pad-list" data-pad-list></ol>
+    <div class="pad-box">
+      <div class="pads" data-pads></div>
+      <div class="styles" data-styles></div>
+    </div>
+    <h2>SOUNDS</h2>
+    <ol class="sound-list" data-sound-list></ol>
+    <label class="row">Volume <input type="range" min="0" max="1" step="0.01" value="0.8" data-volume></label>
+    <button type="button" class="btn" data-sound-test>Test sound (a beep)</button>
+    <p class="hint" data-sound-status>Sound: not started yet (hit a pad).</p>
+  </section>
+
+    <section class="panel" data-panel="effects" hidden>
+    <h2>EFFECTS</h2>
+    <div data-effects></div>
+    <h2>TYPE</h2>
+    <label class="row">Decay <input type="range" min="60" max="1500" step="10" value="250" data-decay></label>
+    <label class="row">Size <input type="range" min="0.2" max="1.6" step="0.01" value="1" data-size></label>
+    <label class="row">Outline <input type="range" min="0.5" max="8" step="0.25" value="1" data-stroke><output data-stroke-out>1 pt</output></label>
+  </section>
+
+    <section class="panel" data-panel="camera" hidden>
+    <h2>CAMERA</h2>
+    <p class="hint">Live video behind the type.</p>
+    <button type="button" class="btn" data-camera-toggle>Start camera</button>
+    <label class="row">Device <select data-camera-device><option value="">Default</option></select></label>
+    <label class="row"><input type="checkbox" data-camera-mirror checked> Mirror</label>
+    <label class="row">Opacity <input type="range" min="0" max="1" step="0.01" value="1" data-camera-opacity></label>
+  </section>
+
+    <section class="panel" data-panel="background" hidden>
+    <h2>BACKGROUND</h2>
+    <div class="choice" data-bg-kind>
+      <button type="button" data-kind="none" aria-pressed="true">Plain</button>
+      <button type="button" data-kind="color">Colour</button>
+      <button type="button" data-kind="pattern">Pattern</button>
+      <button type="button" data-kind="file">File</button>
+    </div>
+    <div data-bg-sub="color" hidden>
+      <div class="swatches" data-swatches></div>
+      <label class="row">Custom <input type="color" value="#2b3fd6" data-bg-color></label>
+      <label class="row">Type colour <input type="color" value="#fafafa" data-ink-color></label>
+    </div>
+    <div data-bg-sub="pattern" hidden>
+      <div class="choice wrap" data-patterns></div>
+      <p class="hint">Patterns pulse with the pads.</p>
+    </div>
+    <div data-bg-sub="file" hidden>
+      <label class="btn file">Choose image or video… <input type="file" accept="image/*,video/*" data-bg-file></label>
+      <p class="hint" data-bg-file-name></p>
+    </div>
+  </section>
+
+    <section class="panel" data-panel="input" hidden>
+    <h2>AUDIO</h2>
+    <p class="hint">Let the music play the type: each of the nine frequency bands drives one axis.</p>
+    <button type="button" class="btn" data-audio-toggle>Listen</button>
+    <label class="row">Device <select data-audio-device><option value="">Default</option></select></label>
+    <div class="choice" data-audio-mode>
+      <button type="button" data-mode="hits" aria-pressed="true">Hits</button>
+      <button type="button" data-mode="follow">Follow</button>
+    </div>
+    <label class="row">Sensitivity <input type="range" min="0" max="1" step="0.01" value="0.55" data-audio-sens></label>
+    <div class="meters" data-meters></div>
+    <p class="hint">To use sound from Ableton or another app, send it to a virtual audio device (e.g. BlackHole or Loopback on Mac) and choose that device here.</p>
+    <h2>MIDI</h2>
+    <p class="hint" data-midi-status></p>
+    <button type="button" class="btn" data-midi-connect>Connect MIDI</button>
+  </section>
+
+  <footer class="menu-foot">
+    <a href="https://malinneamtzu.com/">malinneamtzu.com</a>
+    <a href="https://malinneamtzu.com/work/segmentor/">About Segmentor</a>
+    <a href="mailto:neamtzu.malin@gmail.com">Contact</a>
+  </footer>
+</aside>
+
+<main class="stage" id="stage">
+  <canvas data-canvas aria-label="Segmentor, played live"></canvas>
+    <textarea class="type-input" data-type-input spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Your text"></textarea>
+  <p class="stage-hint" data-hint>Click the word to type · play with Q W E / A S D / Z X C · 1–5 change style</p>
+  <button class="perform-exit" type="button" data-toggle-menu aria-label="Show menu">›</button>
+  <div class="corner">
+    <button class="sq sq-fill" type="button" data-fill title="Fill / outline" aria-label="Fill or outline"></button>
+    <button class="sq sq-theme" type="button" data-theme-toggle title="Light / dark" aria-label="Light or dark"></button>
+  </div>
+  <p class="rec-dot" data-rec-dot hidden>● REC <span data-rec-time>00:00</span></p>
+</main>
+
+<script type="module" src="app.js?v=1794826523"></script>
+</body>
+</html>
