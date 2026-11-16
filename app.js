@@ -25,9 +25,9 @@ const STORE = "segmentor-vj-v1";
 const DEFAULT_KEYS = ["q", "w", "e", "a", "s", "d", "z", "x", "c"];
 const settings = Object.assign({
   text: "Segmentor",
-  style: 0,
+  style: 2,                // Segmentor-03
   theme: "light",
-  fill: false,              // outline (1 pt) by default
+  fill: true,               // filled by default (outline: the left square, bottom right)
   stroke: 1,                // pt
   keys: DEFAULT_KEYS,
   notes: [60, 61, 62, 63, 64, 65, 66, 67, 68],   // MIDI notes, as in the 2025 version
